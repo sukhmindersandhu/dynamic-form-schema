@@ -5,6 +5,12 @@
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "dynamic-form-schema": [
+        "dist/dynamic-form-schema/dynamic-form-schema",
+        "dist/dynamic-form-schema"
+      ]
+    },
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

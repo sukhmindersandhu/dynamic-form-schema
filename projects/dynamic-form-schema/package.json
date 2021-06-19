@@ -3,10 +3,23 @@
   "version": "0.0.1",
   "description": "Schema based dynamic form build for Angular Reactive forms",
   "peerDependencies": {
-    "@angular/common": "^12.0.5",
-    "@angular/core": "^12.0.5"
+    "@angular/common": "^9.1.12",
+    "@angular/core": "^9.1.12",
+    "@angular/forms": "^9.1.12"
   },
+  "keywords": [
+    "Angular Reactive forms",
+    "Schema forms",
+    "Schema Angular Reactive forms",
+    "Angular 9 Reactive forms based on schema"
+  ],
+  "author": "Sukhminder Sandhu <sandhu32@yahoo.com> (https://ssandhu.co.uk/)",
+  "license": "ISC",
   "dependencies": {
     "tslib": "^2.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sukhmindersandhu/dynamic-form-schema"
   }
 }

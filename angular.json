@@ -3,5 +3,37 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-  }
+    "dynamic-form-schema": {
+      "projectType": "library",
+      "root": "projects/dynamic-form-schema",
+      "sourceRoot": "projects/dynamic-form-schema/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/dynamic-form-schema/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/dynamic-form-schema/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/dynamic-form-schema/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/dynamic-form-schema/src/test.ts",
+            "tsConfig": "projects/dynamic-form-schema/tsconfig.spec.json",
+            "karmaConfig": "projects/dynamic-form-schema/karma.conf.js"
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "dynamic-form-schema"
 }
