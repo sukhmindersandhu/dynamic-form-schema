@@ -64,7 +64,7 @@ export class ControlService {
       if (control instanceof FormGroup) {
         errors = errors.concat(this.getFormValidationErrors(control.controls));
       }
-      const controlErrors: ValidationErrors | null  = controls[key].touched ? controls[key].errors : null;
+      const controlErrors: ValidationErrors = controls[key].touched ? controls[key].errors : null;
       if (controlErrors !== null) {
         Object.keys(controlErrors).forEach((keyError) => {
           errors.push({
@@ -116,98 +116,104 @@ export class ControlService {
     schema: ControlSchema
   ) {
     // conditional Validations
-    schema.conditionalValidations[name]?.forEach((cv) => {
-      if (
-        cv.value.filter((v) => this.Comparer(cv.condition, [value, v])).length >
-        0
-      ) {
-        const valdsExists = cv.validations.filter(
-          (c) =>
-            c.name !== null &&
-            (this.validations[cv.targetControlName]?.validations?.findIndex(
-              (n) => n.name === c.name
-            ) === -1 ||
-              !this.validations.hasOwnProperty(cv.targetControlName))
-        );
-        if (valdsExists.length > 0) {
-          const Valds =
-            valdsExists.map((x) => this.validationMap[x.name](x?.args)) || [];
-          this.validations[cv.targetControlName] = {
-            validations: Valds,
-            id: cv.id,
-          };
-          if (Valds.length > 0) {
-            formGroup.get(cv.targetControlName).setValidators(Valds);
-            formGroup.get(cv.targetControlName).updateValueAndValidity({ onlySelf: true });
-          }
-        }
-      } else {
-        cv.validations
-          .filter(
+    if (schema?.conditionalValidations) {
+      schema?.conditionalValidations[name]?.forEach((cv) => {
+        if (
+          cv.value.filter((v) => this.Comparer(cv.condition, [value, v])).length >
+          0
+        ) {
+          const valdsExists = cv.validations.filter(
             (c) =>
               c.name !== null &&
-              this.validations[cv.targetControlName]?.id === cv?.id &&
-              this.validations[cv.targetControlName].validations.length &&
-              this.validations[cv.targetControlName].validations?.findIndex(
+              (this.validations[cv.targetControlName]?.validations?.findIndex(
                 (n) => n.name === c.name
-              ) > -1
-          )
-          .forEach((item) => {
-            const index = this.validations[
-              cv.targetControlName
-            ].validations?.findIndex((n) => n.name === item.name);
-            if (index > -1) {
-              formGroup.get(cv.targetControlName).clearValidators();
-              const defaultValds = schema.defaultValidations[
-                cv.targetControlName
-              ]?.map((x) => this.validationMap[x.name](x?.args));
-              formGroup
-                .get(cv.targetControlName)
-                .setValidators(defaultValds || []);
-              this.validations[cv.targetControlName].validations.splice(
-                index,
-                1
-              );
-              if (
-                this.validations[cv.targetControlName].validations.length < 1
-              ) {
-                delete this.validations[cv.targetControlName];
-              }
-
+              ) === -1 ||
+                !this.validations.hasOwnProperty(cv.targetControlName))
+          );
+          if (valdsExists.length > 0) {
+            const Valds =
+              valdsExists.map((x) => this.validationMap[x.name](x?.args)) || [];
+            this.validations[cv.targetControlName] = {
+              validations: Valds,
+              id: cv.id,
+            };
+            if (Valds.length > 0) {
+              formGroup.get(cv.targetControlName).setValidators(Valds);
               formGroup.get(cv.targetControlName).updateValueAndValidity({ onlySelf: true });
             }
-          });
-      }
-    });
+          }
+        } else {
+          cv.validations
+            .filter(
+              (c) =>
+                c.name !== null &&
+                this.validations[cv.targetControlName]?.id === cv?.id &&
+                this.validations[cv.targetControlName].validations.length &&
+                this.validations[cv.targetControlName].validations?.findIndex(
+                  (n) => n.name === c.name
+                ) > -1
+            )
+            .forEach((item) => {
+              const index = this.validations[
+                cv.targetControlName
+              ].validations?.findIndex((n) => n.name === item.name);
+              if (index > -1) {
+                formGroup.get(cv.targetControlName).clearValidators();
+                const defaultValds = schema.defaultValidations[
+                  cv.targetControlName
+                ]?.map((x) => this.validationMap[x.name](x?.args));
+                formGroup
+                  .get(cv.targetControlName)
+                  .setValidators(defaultValds || []);
+                this.validations[cv.targetControlName].validations.splice(
+                  index,
+                  1
+                );
+                if (
+                  this.validations[cv.targetControlName].validations.length < 1
+                ) {
+                  delete this.validations[cv.targetControlName];
+                }
+
+                formGroup.get(cv.targetControlName).updateValueAndValidity({ onlySelf: true });
+              }
+            });
+        }
+      });
+    }
 
     // enable/ disable
-    schema.conditionalDisabled[name]?.forEach((cd) => {
-      if (
-        cd.value.filter((v) => this.Comparer(cd.condition, [value, v])).length >
-        0
-      ) {
-        cd.targetControlNames.forEach((c, i) =>
-          this.setEnabledDisabled(cd.disabled, c, cd, formGroup, i)
-        );
-      } else {
-        const ctrl = schema.controls.find((x) => x.key === name);
-        if (ctrl) {
+    if (schema?.conditionalDisabled) {
+      schema?.conditionalDisabled[name]?.forEach((cd) => {
+        if (
+          cd.value.filter((v) => this.Comparer(cd.condition, [value, v])).length >
+          0
+        ) {
           cd.targetControlNames.forEach((c, i) =>
-            this.setEnabledDisabled(ctrl?.disabled, c, cd, formGroup, i)
+            this.setEnabledDisabled(cd.disabled, c, cd, formGroup, i)
           );
+        } else {
+          const ctrl = schema.controls.find((x) => x.key === name);
+          if (ctrl) {
+            cd.targetControlNames.forEach((c, i) =>
+              this.setEnabledDisabled(ctrl?.disabled, c, cd, formGroup, i)
+            );
+          }
         }
-      }
-    });
+      });
+    }
 
     // Options
-    schema.conditionalOptions[name]?.forEach((co) => {
-      if (
-        co.value.filter((v) => this.Comparer(co.condition, [value, v])).length >
-        0
-      ) {
-        formGroup.get(co.targetControlName).setValue(co?.optionValue);
-      }
-    });
+    if (schema?.conditionalOptions) {
+      schema?.conditionalOptions[name]?.forEach((co) => {
+        if (
+          co.value.filter((v) => this.Comparer(co.condition, [value, v])).length >
+          0
+        ) {
+          formGroup.get(co.targetControlName).setValue(co?.optionValue);
+        }
+      });
+    }
   }
 
   setEnabledDisabled(

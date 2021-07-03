@@ -1,0 +1,19 @@
+.control-type-con {
+    display: flex;
+    margin-top: 10px;
+    justify-content: flex-start;
+
+    .label {
+        margin-right: 10px;
+        flex: 0.5;
+        border-radius: 3px;
+        flex: 1;
+      }
+
+      input, mat-slider, select{
+        flex: 2;
+        flex-flow: 1;
+        border-radius: 3px;
+        width: 100%;
+      }
+}

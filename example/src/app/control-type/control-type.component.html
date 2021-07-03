@@ -1,0 +1,46 @@
+<ng-container *ngIf="controlGroupName === ''">
+    <ng-container *ngTemplateOutlet="controlTemp"></ng-container>
+</ng-container>
+<ng-container *ngIf="controlGroupName.length > 0">
+        <ng-container [formGroupName]="controlGroupName">
+            <div class="control-type-con"  [ngStyle]="style" [ngSwitch]="entity.controlType">
+                <label class="label" for="{{entity.key}}" *ngIf="entity.label">{{entity.label}}</label>
+
+                <input *ngSwitchCase="'input'" [formControlName]="entity.key"
+                >
+
+                <select [id]="entity.key" *ngSwitchCase="'dropdown'" [formControlName]="entity.key"
+                >
+                    <option *ngFor="let opt of entity.options" [value]="opt.key">{{opt.value}}</option>
+                </select>
+        
+                <mat-slider *ngSwitchCase="'mat-slider'" [formControlName]="entity.key"
+                    [max]="100"
+                    [min]="1"
+                    thumbLabel
+                    tickInterval="1"
+                >
+                </mat-slider>
+            </div>
+        </ng-container>
+</ng-container>
+<ng-template #controlTemp>
+    <div class="control-type-con" [ngStyle]="style" [ngSwitch]="entity.controlType">
+        <label class="label" for="{{entity.key}}" *ngIf="entity.label">{{entity.label}}</label>
+            <input *ngSwitchCase="'input'" [formControlName]="entity.key"
+            >
+
+            <select [id]="entity.key" *ngSwitchCase="'dropdown'" [formControlName]="entity.key"
+            >
+                <option *ngFor="let opt of entity.options" [value]="opt.key">{{opt.value}}</option>
+            </select>
+
+            <mat-slider *ngSwitchCase="'mat-slider'" [formControlName]="entity.key"
+                [max]="100"
+                [min]="1"
+                thumbLabel
+                tickInterval="1"
+            >
+            </mat-slider>
+        </div>
+</ng-template>

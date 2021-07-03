@@ -1,22 +1,4 @@
-<p>
-<p><p align="center">
-  <img src="./.github/dynamic-forms-schema-logo.png" width="650" />
-</p>
-
-<p align="center">
-  Schema based dynamic form build for Angular Reactive forms
-</p>
-
-**Which Version to use?**
-
-| Angular version | Formly version         |
-| --------------- | ---------------------- |
-| Angular >= 9.1   | `@dynamic-form-schema@0.x` |
-
-
-* Supports modern JavaScript: ES5, ES2019.
-
-# DynamicFormSchema
+# AngularTest1
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.0.3.
 

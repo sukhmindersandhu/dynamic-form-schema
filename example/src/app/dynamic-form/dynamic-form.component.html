@@ -1,0 +1,57 @@
+<div class="con">
+    <form novalidate class="form-con" (ngSubmit)="save()" [formGroup]="newForm">
+        <ng-container *ngFor="let ctrl of controls$ | async">
+            <div [ngSwitch]="ctrl.controlType">
+                <ng-container *ngSwitchCase="'formgroup'">
+                    <label class="label" *ngIf="ctrl.label">{{ctrl.label}}</label>
+                    <div class="formGroupName" 
+                         formGroupName="{{ctrl.key}}" 
+                         [ngStyle]="controlService.calculateStyles(newForm, ctrl.key)">
+                        <ng-container *ngFor="let subCtrl of ctrl.controls">
+                            <ng-container [ngSwitch]="subCtrl.controlType">
+                                <control-type 
+                                    [entity]="subCtrl"
+                                    [controlGroupName]="ctrl.key" 
+                                    [style]="controlService.calculateStyles(newForm, subCtrl.key)"
+                                >
+                                </control-type>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                    <ng-container *ngTemplateOutlet="controlTemp; context: {$implicit: ctrl}"></ng-container>
+                </ng-container>
+            </div>
+        </ng-container>
+        <ng-template let-ctrl #controlTemp>
+            <ng-container [ngSwitch]="ctrl.controlType">
+                <control-type 
+                    [entity]="ctrl"
+                    [style]="controlService.calculateStyles(newForm, ctrl.key)"
+                >
+                </control-type>
+            </ng-container>
+        </ng-template>
+
+        <div class="errors" *ngFor="let error of controlService.getErrors(newForm)">
+            {{ error }}
+        </div>
+        <div><Br>
+            <button mat-raised-button color="primary"
+                style="width:80px;"
+                type="submit"
+                [title]="newForm.valid ? 'Save your entered data' : 'Disabled until the form data is valid'"
+                [disabled]="!newForm.valid">
+            Save
+            </button>
+        </div>
+    </form>
+    <div><Br><Br>
+            Value: {{ newForm?.value ? (newForm?.value | json) : '' }}
+        <Br>Valid: {{ newForm.valid | json }}
+        <Br>Dirty: {{ newForm.dirty }}
+        <Br>touched: {{ newForm.touched }}
+        <Br>pristine: {{ newForm.pristine }}
+    </div>
+</div>

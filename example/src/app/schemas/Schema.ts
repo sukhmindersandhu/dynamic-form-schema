@@ -1,36 +1,3 @@
-<p>
-<p><p align="center">
-  <img src="./.github/dynamic-form-schema-logo.png" width="650" />
-</p>
-
-<p align="center">
-  Schema based dynamic form build for Angular Reactive forms
-</p>
-
-**Which Version to use?**
-
-| Angular version | Formly version         |
-| --------------- | ---------------------- |
-| Angular >= 9.1   | `@dynamic-form-schema@0.x` |
-
-
-* Supports modern JavaScript: ES5, ES2019.
-
-## User Guide
-
-Globally install `dynamic-form-schema` using the [npm](https://www.npmjs.com/) package manager:
-
-```sh
-$ npm install -g dynamic-form-schema
-```
-
-# Dynamic-Form-Schema
-
-Dynamic-form-schema uses Angular reactive forms to create form model when component initilizes. Schema provide defination of form model (The form model is the source of truth for the control). Dynamic-form-schema can create complex form model (Create a nested form group) and all can be defined in a simple schema. Whole for model will be defined in plain json schema.
-
-Example Schema would look like below:
-
-```html
 export const schema = {
     "controls": [
         { key: 'title', label: 'Title', value: 'mr.', disabled: false, controlType: 'dropdown', options: [
@@ -158,25 +125,3 @@ export const schema = {
         ]
     }
 }
-```
-
-
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.12.
-
-## Build
-
-Run `ng build dynamic-form-schema` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Publishing
-
-Go to projects/dynamic-form-schema folder `cd projects/dynamic-form-schema` 
-run `npm version patch`
-After building your library with `ng build dynamic-form-schema`, go to the dist folder `cd dist/dynamic-form-schema` and run `npm publish`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
-
-## Example:
-
-You can find working example under [example folder](example/README.md)

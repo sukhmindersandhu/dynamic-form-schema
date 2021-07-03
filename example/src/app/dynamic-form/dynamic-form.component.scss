@@ -1,0 +1,24 @@
+.con {
+    display: flex;
+    flex-direction: column;
+
+    .form-con {
+        display: flex;
+        flex-direction: column;
+
+        .label {
+            margin-right: 10px;
+        }
+    
+        .formGroupName {
+            display: flex;
+            flex-direction: column;
+            margin-left: 40px;
+        }
+
+        .errors {
+            margin-top: 5px;
+            color: red;
+        }
+    }
+}
