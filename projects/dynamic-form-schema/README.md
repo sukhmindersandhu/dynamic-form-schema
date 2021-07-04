@@ -1,8 +1,3 @@
-<p>
-<p><p align="center">
-  <img src="./.github/dynamic-form-schema-logo.png" width="650" />
-</p>
-
 <p align="center">
   Schema based dynamic form build for Angular Reactive forms
 </p>
@@ -26,7 +21,26 @@ $ npm install -g dynamic-form-schema
 
 # Dynamic-Form-Schema
 
-Dynamic-form-schema uses Angular reactive forms to create form model when component initilizes. Schema provide defination of form model (The form model is the source of truth for the control). Dynamic-form-schema can create complex form model (Create a nested form group) and all can be defined in a simple schema. Whole for model will be defined in plain json schema.
+Dynamic-form-schema uses Angular reactive forms to create form model when component is initialized. Schema provides definition of form model (The form model is the source of truth for the control). Dynamic-form-schema can create complex form model (Create a nested form group) and all can be defined in a simple schema. Form model and nested FormGroup models can be defined in plain json schema.
+
+This gives you more flexibility, where Dynamic-form-schema generate form model for you-based on your schema, and then you are free to link/bind the control model to the control by using Angular reactive forms [FormControlName](https://angular.io/api/forms/FormControlName). Added to it in Schema, you can also add other logic: default values, control options, validations, control enabling/disabling logic, options and validations based on conditions.
+
+**Features:**
+- No dependency on View logic - Schema only create form model.
+- Simply derive/extend your component from `ControlPresenterBase` class, inject `ControlService` in the constructor and then provide schema in `ngOnInit()`
+
+```
+  ngOnInit() {
+    this.onInit(schema); // onInit is a ControlPresenterBase base class function
+  }
+```
+- Schema defines list of `controls`(of `controlType`: 'dropdown', 'input', 'mat-slider' or any other) - controls could be native, Angular or any other third party control.
+- Schema also defines controls:
+    * `defaultValidations`: Defines control default value at the time of initialization.
+    * `conditionalDisabled`: Defines controls enabling/disabling at run time based on other controls' value. 
+    * `conditionalOptions`: Defines controls selected option value based on other controls' selected value at run time. 
+    * `conditionalValidations`: Defines controls change in validation rules(for example: Required) based on selected value on other control at run time.
+
 
 Example Schema would look like below:
 
