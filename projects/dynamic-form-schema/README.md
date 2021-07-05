@@ -1,3 +1,8 @@
+<p>
+<p><p align="center">
+  <img src="https://github.com/sukhmindersandhu/dynamic-form-schema/blob/main/.github/dynamic-form-schema-logo.png" width="650" />
+</p>
+
 <p align="center">
   Schema based dynamic form build for Angular Reactive forms
 </p>
@@ -42,7 +47,7 @@ This gives you more flexibility, where Dynamic-form-schema generate form model f
     * `conditionalValidations`: Defines controls change in validation rules(for example: Required) based on selected value on other control at run time.
 <br>
 <p><p align="center">
-  <img src="../../example/images/form.jpg" width="1000" />
+  <img src="https://github.com/sukhmindersandhu/dynamic-form-schema/blob/main/example/images/form.jpg" width="1000" />
 </p>
 
 Example Schema would look like below:
