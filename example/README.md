@@ -1,10 +1,14 @@
-# AngularTest1
+# Angular Dynamic form schema test project
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.0.3.
 
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+<p><p align="center">
+  <img src="./images/form.jpg" width="1000" />
+</p>
 
 ## Code scaffolding
 
