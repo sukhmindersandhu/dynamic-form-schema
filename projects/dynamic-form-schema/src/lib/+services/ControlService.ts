@@ -4,33 +4,17 @@ import {
   FormBuilder,
   FormGroup,
   ValidatorFn,
-  Validators,
-  ValidationErrors,
+  Validators
 } from '@angular/forms';
-import { ControlModel } from '../+models/ControlModel';
 import { IDictionary } from '../+models/IDictionary';
-import {
-  ConditionalDisabled,
-  ControlSchema,
-  Validation,
-} from '../+models/Schema';
-
-export interface ValidationError {
-  controlName: string;
-  errorName: string;
-  errorValue: any;
-}
-
-export interface FormGroupControls {
-  [key: string]: AbstractControl;
-}
+import { ControlServiceBase } from './ControlServiceBase';
 
 @Injectable()
-export class ControlService {
+export class ControlService extends ControlServiceBase {
 
-  validations: IDictionary<any> = {};
-
-  constructor(private fb: FormBuilder) {}
+  constructor(protected fb: FormBuilder) {
+    super(fb);
+  }
 
   getErrors(formGroup: FormGroup) {
     return this.getFormValidationErrors(formGroup.controls).map((error) => {
@@ -57,28 +41,6 @@ export class ControlService {
     });
   }
 
-  getFormValidationErrors(controls: FormGroupControls): ValidationError[] {
-    let errors: ValidationError[] = [];
-    Object.keys(controls).forEach((key) => {
-      const control = controls[key];
-      if (control instanceof FormGroup) {
-        errors = errors.concat(this.getFormValidationErrors(control.controls));
-      }
-      const controlErrors: ValidationErrors = controls[key].touched ? controls[key].errors : null;
-      if (controlErrors !== null) {
-        Object.keys(controlErrors).forEach((keyError) => {
-          errors.push({
-            controlName: key,
-            errorName: keyError,
-            errorValue: controlErrors[keyError],
-          });
-        });
-      }
-    });
-
-    return errors;
-  }
-
   validationMap: IDictionary<any> = {
     required: (args: any[]) => Validators.required,
     minLength: (args: number[]) => Validators.minLength(args[0]),
@@ -94,150 +56,6 @@ export class ControlService {
     isNotNull: (args: any[]): Boolean => args[0] !== null,
   };
 
-  Comparer(conditionType: string, args: any[]): boolean {
-    return this.ComparerMap[conditionType](args);
-  }
-
-  mapValiations(
-    key: string,
-    validations: IDictionary<Validation[]>
-  ): ValidatorFn[] {
-    const validationFunctions = validations[key]?.map((element) => {
-      return this.validationMap[element.name](element?.args);
-    });
-
-    return validationFunctions;
-  }
-
-  processConditionalValidations(
-    name: string,
-    value: any,
-    formGroup: FormGroup,
-    schema: ControlSchema
-  ) {
-    // conditional Validations
-    if (schema?.conditionalValidations) {
-      schema?.conditionalValidations[name]?.forEach((cv) => {
-        if (
-          cv.value.filter((v) => this.Comparer(cv.condition, [value, v])).length >
-          0
-        ) {
-          const valdsExists = cv.validations.filter(
-            (c) =>
-              c.name !== null &&
-              (this.validations[cv.targetControlName]?.validations?.findIndex(
-                (n) => n.name === c.name
-              ) === -1 ||
-                !this.validations.hasOwnProperty(cv.targetControlName))
-          );
-          if (valdsExists.length > 0) {
-            const Valds =
-              valdsExists.map((x) => this.validationMap[x.name](x?.args)) || [];
-            this.validations[cv.targetControlName] = {
-              validations: Valds,
-              id: cv.id,
-            };
-            if (Valds.length > 0) {
-              formGroup.get(cv.targetControlName).setValidators(Valds);
-              formGroup.get(cv.targetControlName).updateValueAndValidity({ onlySelf: true });
-            }
-          }
-        } else {
-          cv.validations
-            .filter(
-              (c) =>
-                c.name !== null &&
-                this.validations[cv.targetControlName]?.id === cv?.id &&
-                this.validations[cv.targetControlName].validations.length &&
-                this.validations[cv.targetControlName].validations?.findIndex(
-                  (n) => n.name === c.name
-                ) > -1
-            )
-            .forEach((item) => {
-              const index = this.validations[
-                cv.targetControlName
-              ].validations?.findIndex((n) => n.name === item.name);
-              if (index > -1) {
-                formGroup.get(cv.targetControlName).clearValidators();
-                const defaultValds = schema.defaultValidations[
-                  cv.targetControlName
-                ]?.map((x) => this.validationMap[x.name](x?.args));
-                formGroup
-                  .get(cv.targetControlName)
-                  .setValidators(defaultValds || []);
-                this.validations[cv.targetControlName].validations.splice(
-                  index,
-                  1
-                );
-                if (
-                  this.validations[cv.targetControlName].validations.length < 1
-                ) {
-                  delete this.validations[cv.targetControlName];
-                }
-
-                formGroup.get(cv.targetControlName).updateValueAndValidity({ onlySelf: true });
-              }
-            });
-        }
-      });
-    }
-
-    // enable/ disable
-    if (schema?.conditionalDisabled) {
-      schema?.conditionalDisabled[name]?.forEach((cd) => {
-        if (
-          cd.value.filter((v) => this.Comparer(cd.condition, [value, v])).length >
-          0
-        ) {
-          cd.targetControlNames.forEach((c, i) =>
-            this.setEnabledDisabled(cd.disabled, c, cd, formGroup, i)
-          );
-        } else {
-          const ctrl = schema.controls.find((x) => x.key === name);
-          if (ctrl) {
-            cd.targetControlNames.forEach((c, i) =>
-              this.setEnabledDisabled(ctrl?.disabled, c, cd, formGroup, i)
-            );
-          }
-        }
-      });
-    }
-
-    // Options
-    if (schema?.conditionalOptions) {
-      schema?.conditionalOptions[name]?.forEach((co) => {
-        if (
-          co.value.filter((v) => this.Comparer(co.condition, [value, v])).length >
-          0
-        ) {
-          formGroup.get(co.targetControlName).setValue(co?.optionValue);
-        }
-      });
-    }
-  }
-
-  setEnabledDisabled(
-    disabledFlag: boolean,
-    targetControlName: string,
-    cd: ConditionalDisabled,
-    formGroup: FormGroup,
-    index: number
-  ) {
-    if (disabledFlag) {
-      cd?.disabledValues?.length
-        ? formGroup.get(targetControlName).setValue(cd?.disabledValues[index])
-        : cd.emptyIt
-        ? formGroup.get(targetControlName).setValue('')
-        : '';
-    } else if (cd.emptyIt) {
-      formGroup.get(targetControlName).setValue('');
-    }
-
-    disabledFlag
-      ? formGroup.get(targetControlName).disable()
-      : formGroup.get(targetControlName).enable();
-  }
-
   /* 
     Defined validations and validators
   */
@@ -252,74 +70,30 @@ export class ControlService {
           return null;
         };
 
-        case 'emailGroup':
-          return (c: AbstractControl): { [key: string]: boolean } | null => {
-            if (c instanceof FormGroup) {
-              // Validate emails matches, make sure control matches
-              const emailControl = c.get('email');
-              const confirmControl = c.get('confirmEmail');
-    
-              if (!emailControl.touched || !confirmControl.touched) {
-                return null;
-              }
-    
-              if (emailControl.value === confirmControl.value) {
-                return null;
-              }
-    
-              return { emailsNotMatched: true };
+      case 'emailGroup':
+        return (c: AbstractControl): { [key: string]: boolean } | null => {
+          if (c instanceof FormGroup) {
+            // Validate emails matches, make sure control matches
+            const emailControl = c.get('email');
+            const confirmControl = c.get('confirmEmail');
+  
+            if (!emailControl.touched || !confirmControl.touched) {
+              return null;
             }
-    
-            return null;
-          };
-
-        default:
+  
+            if (emailControl.value === confirmControl.value) {
+              return null;
+            }
+  
+            return { emailsNotMatched: true };
+          }
+  
           return null;
-    }
-  }
-
-  getControls(items: ControlModel[], schema: ControlSchema) {
-    return items.reduce((obj, item) => {
-      return {
-        ...obj,
-        [item['key']]: [
-          { value: item.value, disabled: item.disabled },
-          this.mapValiations(item.key, schema.defaultValidations),
-        ],
-      };
-    }, {});
-  }
-
-  toFormGroup(schema: ControlSchema) {
-    // Generating form controls
-    const formGroups = schema.controls
-      .filter((x) => x.controlType === 'formgroup')
-      .reduce((obj, item) => {
-        const objs = {
-          ...obj,
-          [item['key']]: this.fb.group(
-            this.getControls(item.controls, schema),
-            { validator: this.validationMap[item['key']](null) }
-          ),
         };
 
-        return objs;
-      }, {});
-
-    const grpControls = this.getControls(schema.controls, schema);
-    return this.fb.group({ ...grpControls, ...formGroups });
-  }
-
-  hasControlValid(control: AbstractControl): boolean {
-    if (control instanceof FormGroup) {
-      if (!control.touched) {
-        return true;
-      }
-
-      return control.valid;
+      default:
+        return null;
     }
-
-    return control && control.touched && control?.errors ? !(Object.keys(control?.errors)?.length > 0) : true;
   }
 
   calculateStyles(formGroup: FormGroup, key: string) {
@@ -334,38 +108,5 @@ export class ControlService {
     {
       'flex': '2'
     }
-  }
-
-  getControlfromFromGroup(formGroup: FormGroup, key: string): AbstractControl {
-    let control = formGroup.controls[key];
-    if (control === null || control === undefined)  {
-      Object.entries(formGroup.controls).forEach(([elementKey, elementValue]) => {
-        if (!control && elementValue instanceof FormGroup) {
-          control = this.getControlfromFromGroup(elementValue, key);
-        }
-      });
-    }
-
-    return control;
-  }
-
-  checkAndValidateAllFormGroupControls(formGroup: FormGroup) {
-    Object.entries(formGroup.controls).forEach(([_, control]) => {
-      if (control instanceof FormGroup) {
-        this.checkAndValidateAllFormControls(control);
-      }
-    });
-  }
-
-  // Check Form Groups Validations
-  private checkAndValidateAllFormControls(formGroup: FormGroup) {
-      Object.entries(formGroup.controls).forEach(([_, control]) => {
-        if (control instanceof FormGroup) {
-            this.checkAndValidateAllFormControls(control);
-          }
-          else {
-            control.updateValueAndValidity();
-        }
-    });
   }
 }

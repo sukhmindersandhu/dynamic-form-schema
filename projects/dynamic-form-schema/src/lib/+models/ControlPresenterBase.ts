@@ -2,8 +2,9 @@ import { Component} from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { of } from "rxjs";
 import { Subscription } from "rxjs/internal/Subscription";
-import { ControlService, FormGroupControls } from "../+services/ControlService";
+import { ControlService } from "../+services/ControlService";
 import { ControlSchema } from '../+models/Schema';
+import { FormGroupControls } from "../+services/ControlServiceBase";
 
 @Component({
     template: ''
