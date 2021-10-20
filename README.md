@@ -52,7 +52,7 @@ This gives you more flexibility, where Dynamic-form-schema generate form model f
 </p>
 
 
-Example Schema would look like below:
+### Example Schema would look like below:
 
 ```html
 export const schema = {
