@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ControlPresenterBase, ControlService } from 'dynamic-form-schema';
 import { schema } from '../schemas/Schema';
+import { ControlServiceDerive } from '../services/ControlServiceDerive';
 
 @Component({
   selector: 'dynamic-form',
@@ -9,7 +10,7 @@ import { schema } from '../schemas/Schema';
 })
 export class DynamicFormComponent extends ControlPresenterBase implements OnInit, OnDestroy {
 
-  constructor(public controlService: ControlService) {
+  constructor(public controlService: ControlServiceDerive) {
     super(controlService);
    }
   

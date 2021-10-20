@@ -3,14 +3,15 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DynamicFormSchemaModule, ControlService } from 'dynamic-form-schema';
+import { ControlService, DynamicFormSchemaModule } from 'dynamic-form-schema';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSliderModule } from '@angular/material/slider';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
 import { ControlTypeComponent } from './control-type/control-type.component';
+import { ControlServiceDerive } from './services/ControlServiceDerive';
 
 
 @NgModule({
@@ -29,7 +30,7 @@ import { ControlTypeComponent } from './control-type/control-type.component';
     MatSliderModule,
     BrowserAnimationsModule
   ],
-  providers: [ControlService],
+  providers: [ControlService, ControlServiceDerive],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
