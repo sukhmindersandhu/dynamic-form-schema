@@ -16,7 +16,7 @@ export class ControlService extends ControlServiceBase {
     super(fb);
   }
 
-  getErrors(formGroup: FormGroup) {
+  public getErrors(formGroup: FormGroup) {
     return this.getFormValidationErrors(formGroup.controls).map((error) => {
       switch (error.errorName) {
         case 'required':
@@ -41,15 +41,16 @@ export class ControlService extends ControlServiceBase {
     });
   }
 
-  validationMap: IDictionary<any> = {
-    required: (args: any[]) => Validators.required,
-    minLength: (args: number[]) => Validators.minLength(args[0]),
-    maxLength: (args: number[]) => Validators.maxLength(args[0]),
-    range: (args: number[]) => this.getValidatorFn('range', args),
-    emailGroup: (args: any[]) => this.getValidatorFn('emailGroup')
-  };
+  public validationMap(): IDictionary<any> {
+    return {
+      required: (args: any[]) => Validators.required,
+      minLength: (args: number[]) => Validators.minLength(args[0]),
+      maxLength: (args: number[]) => Validators.maxLength(args[0]),
+      range: (args: number[]) => this.getValidatorFn('range', args),
+    };
+  }
 
-  ComparerMap: IDictionary<any> = {
+  public comparerMap: IDictionary<any> = {
     equalTo: (args: any[]): Boolean => args[0] === args[1],
     notEqualTo: (args: any[]): Boolean => args[0] !== args[1],
     isNull: (args: any[]): Boolean => args[0] === null,
@@ -59,7 +60,7 @@ export class ControlService extends ControlServiceBase {
   /* 
     Defined validations and validators
   */
-  getValidatorFn(name: string, args: any[] = null): ValidatorFn {
+  public getValidatorFn(name: string, args: any[] = null): ValidatorFn {
     switch (name) {
       case 'range':
         return (c: AbstractControl): { [key: string]: number[] } | null => {

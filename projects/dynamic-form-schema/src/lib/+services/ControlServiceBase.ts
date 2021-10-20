@@ -31,9 +31,9 @@ export abstract class ControlServiceBase {
 
   constructor(protected fb: FormBuilder) { }
 
-  public abstract validationMap: IDictionary<any>;
+  public abstract validationMap(): IDictionary<any>;
 
-  public abstract ComparerMap: IDictionary<any>;
+  public abstract comparerMap: IDictionary<any>;
 
   public abstract calculateStyles(formGroup: FormGroup, key: string);
 
@@ -67,7 +67,7 @@ export abstract class ControlServiceBase {
   }
 
   Comparer(conditionType: string, args: any[]): boolean {
-    return this.ComparerMap[conditionType](args);
+    return this.comparerMap[conditionType](args);
   }
 
   mapValiations(
@@ -75,7 +75,7 @@ export abstract class ControlServiceBase {
     validations: IDictionary<Validation[]>
   ): ValidatorFn[] {
     const validationFunctions = validations[key]?.map((element) => {
-      return this.validationMap[element.name](element?.args);
+      return this.validationMap()[element.name](element?.args);
     });
 
     return validationFunctions;
@@ -104,7 +104,7 @@ export abstract class ControlServiceBase {
           );
           if (valdsExists.length > 0) {
             const Valds =
-              valdsExists.map((x) => this.validationMap[x.name](x?.args)) || [];
+              valdsExists.map((x) => this.validationMap()[x.name](x?.args)) || [];
             this.validations[cv.targetControlName] = {
               validations: Valds,
               id: cv.id,
@@ -133,7 +133,7 @@ export abstract class ControlServiceBase {
                 formGroup.get(cv.targetControlName).clearValidators();
                 const defaultValds = schema.defaultValidations[
                   cv.targetControlName
-                ]?.map((x) => this.validationMap[x.name](x?.args));
+                ]?.map((x) => this.validationMap()[x.name](x?.args));
                 formGroup
                   .get(cv.targetControlName)
                   .setValidators(defaultValds || []);
@@ -231,7 +231,7 @@ export abstract class ControlServiceBase {
           ...obj,
           [item['key']]: this.fb.group(
             this.getControls(item.controls, schema),
-            { validator: this.validationMap[item['key']](null) }
+            { validator: this.validationMap()[item['key']](null) }
           ),
         };
 
