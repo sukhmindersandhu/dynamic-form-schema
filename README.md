@@ -313,6 +313,45 @@ You can define validations and validators in this function and map in above vali
   }
 ```
 
+
+## `updateActiveControls ControlPresenterBase` Base Class function:
+One's form model is initialised by the `onInit()` function then it wasn't possible to update form model for data returned later, that was called asynchronous. Therefore, the new updateActiveControls function in the  `ControlPresenterBase` Base Class updates the form model.
+You need to pass new controls collection - `controls: ControlModel[]`
+In the below example, Dropdown options data (`this.getOptionsData`) is returned asynchronous by the api:
+
+```
+  @Input() set controlSchema(schema: ControlSchema) {
+    if (schema) {
+      if (schema.controls.length) {
+        const itemswithDynamicKeywords = schema.controls.filter(x => x.dynamic === true)
+        .map(x => x.dynamicKeyword);
+
+        if (itemswithDynamicKeywords?.length) {
+          this.getOptionsData(itemswithDynamicKeywords).pipe(
+            observeOn(asapScheduler)
+            ).subscribe(
+            (x: IDictionary<{id: number, name: string}[]>)  => {
+            let newControls = [...schema.controls];
+            itemswithDynamicKeywords.forEach(item => {
+              if (item in x) {
+                const masterData = x[item];
+                console.log(masterData);
+                const options = masterData.map(item => ({ key: item.id?.toString(), value: item.name}));
+                const control = schema.controls.find(x => x.dynamicKeyword === item);
+                const updatedControl: ControlModel = { ...control, options: options };
+                newControls = [...newControls.filter(x => x.dynamicKeyword !== item), updatedControl];
+              }
+            })
+            this.updateActiveControls(newControls);
+          });
+        }
+      }
+
+      this.onInit(schema);
+    }
+  }
+```
+
 ## Build
 
 This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.12.
@@ -321,9 +360,9 @@ Run `ng build dynamic-form-schema` to build the project. The build artifacts wil
 
 ## Publishing
 
-Go to projects/dynamic-form-schema folder `cd projects/dynamic-form-schema` 
-run `npm version patch`
-After building your library with `ng build dynamic-form-schema`, go to the dist folder `cd dist/dynamic-form-schema` and run `npm publish`.
+- Go to projects/dynamic-form-schema folder `cd projects/dynamic-form-schema` 
+- run `npm version patch`
+- After building your library with `ng build dynamic-form-schema`, go to the dist folder `cd dist/- - dynamic-form-schema` and run `npm publish`.
 
 ## Further help
 

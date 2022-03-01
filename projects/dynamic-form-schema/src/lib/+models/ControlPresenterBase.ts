@@ -1,10 +1,11 @@
 import { Component} from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { of } from "rxjs";
+import { of, BehaviorSubject } from "rxjs";
 import { Subscription } from "rxjs/internal/Subscription";
 import { ControlService } from "../+services/ControlService";
 import { ControlSchema } from '../+models/Schema';
 import { FormGroupControls } from "../+services/ControlServiceBase";
+import { ControlModel } from "./ControlModel";
 
 @Component({
     template: ''
@@ -12,6 +13,8 @@ import { FormGroupControls } from "../+services/ControlServiceBase";
 export class ControlPresenterBase {
     sub: Subscription[] = [];
     controls$;
+    activeControls = new BehaviorSubject<ControlModel[]>(null);
+    activeControls$ = this.activeControls.asObservable();
     newForm: FormGroup;
   
     constructor(protected controlService: ControlService) { }
@@ -21,9 +24,25 @@ export class ControlPresenterBase {
         this.subscribeControls(formGroup.controls, formGroup, schema);
     }
 
+    protected updateActiveControls(controls: ControlModel[]): ControlModel[] {
+        const newControls = controls.map(x => {
+            if (x.options?.length) {
+                return { ...x, options$: of(x.options) };
+            }
+
+            return x;
+        });
+
+        this.activeControls.next(newControls);
+        return newControls;
+    }
+
     onInit(currentSchema: ControlSchema) {
-        this.controls$ = of(currentSchema?.controls.sort((a, b) => a.order - b.order));
         this.newForm = this.controlService.toFormGroup(currentSchema);
+        const controls = currentSchema?.controls?.slice()
+                .sort((a, b) => a.order - b.order);
+        this.controls$ = of(controls);
+        this.updateActiveControls(controls);
         this.formGroupControlsSubscribeAndValidate(currentSchema, this.newForm);
     }
 

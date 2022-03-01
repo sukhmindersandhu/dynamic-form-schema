@@ -1,6 +1,6 @@
 {
   "name": "dynamic-form-schema",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Schema based dynamic form build for Angular Reactive forms",
   "peerDependencies": {
     "@angular/common": "^9.1.12",

@@ -1,6 +1,6 @@
 {
   "name": "dynamic-form-schema",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Schema based dynamic form build for Angular Reactive forms",
   "peerDependencies": {
     "@angular/common": "^9.1.12",
@@ -16,7 +16,25 @@
   "author": "Sukhminder Sandhu <sandhu32@yahoo.com> (https://ssandhu.co.uk/)",
   "license": "ISC",
   "dependencies": {
-    "tslib": "^2.1.0"
+    "@angular/animations": "~12.0.3",
+    "@angular/common": "~12.0.3",
+    "@angular/compiler": "~12.0.3",
+    "@angular/core": "~12.0.3",
+    "@angular/forms": "~12.0.3",
+    "@angular/platform-browser": "~12.0.3",
+    "@angular/platform-browser-dynamic": "~12.0.3",
+    "@angular/router": "~12.0.3",
+    "rxjs": "~6.6.0",
+    "tslib": "^2.1.0",
+    "zone.js": "~0.11.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~12.0.5",
+    "@angular/cli": "~12.0.3",
+    "@angular/compiler-cli": "~12.0.3",
+    "@types/jasmine": "~3.6.0",
+    "@types/node": "^12.11.1",
+    "ng-packagr": "^12.0.0"
   },
   "repository": {
     "type": "git",
