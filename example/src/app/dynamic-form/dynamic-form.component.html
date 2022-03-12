@@ -1,6 +1,6 @@
 <div class="con">
     <form novalidate class="form-con" (ngSubmit)="save()" [formGroup]="newForm">
-        <ng-container *ngFor="let ctrl of controls$ | async">
+        <ng-container *ngFor="let ctrl of activeControls$ | async">
             <div [ngSwitch]="ctrl.controlType">
                 <ng-container *ngSwitchCase="'formgroup'">
                     <label class="label" *ngIf="ctrl.label">{{ctrl.label}}</label>

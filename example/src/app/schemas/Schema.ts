@@ -28,7 +28,8 @@ export const schema = {
         { key: 'emailGroup', label: 'Email Group:', controlType: 'formgroup', order: 8, controls: [
             { key: 'email', label: 'Email', value:'ww', disabled: false, controlType: 'input', type: 'email', order: 1, groupName: 'emailGroup' },
             { key: 'confirmEmail', label: 'Confirm Email', value: 'ww2', disabled: false, controlType: 'input', type: 'email', order: 2, groupName: 'emailGroup' }
-        ]}
+        ]},
+        { key: 'city', label: 'City', value:'', disabled: false, order: 9, controlType: 'dropdown', options: [], dynamic:true, dynamicKeyword: 'city'}
       ],
     "defaultValidations": {
         'title': [
