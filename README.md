@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-A schema-based dynamic form builder for Angular Reactive forms provides a user-friendly and efficient way to create forms. This tool allows users to easily define the structure and behavior of their forms, resulting in faster development and improved user experience. It ensures that the forms are built according to industry standards and best practices, making it a reliable and professional choice for any project.
+A schema-based dynamic form builder for Angular Reactive forms provides a user-friendly and efficient way to create forms. This project allows users to easily define the structure and behavior of their forms, resulting in faster development and improved user experience.
 </p>
 
 **Which Version to use?**
